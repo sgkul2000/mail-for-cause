@@ -10,6 +10,14 @@
             </div>
             <input v-model="name" class="input is-primary my-2" type="text" placeholder="Enter the name of cause">
         </div>
+        <div class="descriptionInput">
+            <div class="TitleGroup">
+                <div class="is-size-3 has-text-weight-bold">Description</div>
+                <!-- <div class="AddIcon"><button class="button is-primary is-light">Add</button></div> -->
+            </div>
+            <input v-model="description" class="input is-primary my-2" type="text" placeholder="Enter a description for the cause">
+
+        </div>
         <div id="ToInputs" class="my-6">
             <div class="TitleGroup">
                 <div class="is-size-3 has-text-weight-bold">To</div>
@@ -50,6 +58,7 @@
         delimiters:["[[", "]]"],
         data:{
             name: "",
+            description: "",
             to:[
                 ""
             ],
@@ -125,6 +134,7 @@
                 this.Validate()
                 axios.post("/api/cause", {
                     name: this.name,
+                    description: this.description,
                     to: this.to,
                     subjects: this.subjects,
                     bodies: this.bodies
