@@ -1,0 +1,94 @@
+{{define "signup"}}
+<div id="LoginMain">
+    <div class="columns is-centered is-vcentered" style="min-height:calc(100vh - 237px);">
+        <div class="column is-one-quarter-desktop">
+            <div class="has-text-centered is-size-1 my-2">Sign up</div>
+            <input :class="{'is-loading':loading}" v-model="name" class="input is-primary is-small my-2" type="text" placeholder="Enter name">
+            <input :class="{'is-loading':loading}" v-model="email" class="input is-primary is-small my-2" type="text" placeholder="Enter email">
+            <input :class="{'is-loading':loading}" v-model="password" class="input is-primary is-small my-2" type="password" placeholder="Enter password">
+            <div v-if="error.length > 0" id="Error" class=" has-text-danger has-text-centered has-text-weight-bold">
+                [[ error ]]
+            </div>
+            <div class="columns">
+                <div class="column is-two-third" @click="login">
+                    <button class="button is-primary full-width my-2">Signup</button>
+                </div>
+                <div class="column is-one-third" @click="redirect()">
+                    <button class="button is-secondary is-light full-width my-2">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        new Vue({
+            el: "#LoginMain",
+            delimiters: ["[[", "]]"],
+            data:{
+                name: "",
+                email: "",
+                password: "",
+                loading: false,
+                error: ""
+            },
+            methods:{
+                login() {
+                    this.error = ""
+                    this.loading = true
+                    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    if(
+                        this.email === "" ||
+                        this.name === "" ||
+                        this.password === ""
+                    ) {
+                        this.SetError("Please enter all the details correctly")
+                        this.loading = false
+                        return
+                    } else {
+
+                        if(!re.test(String(this.email).toLowerCase())) {
+                            this.SetError("Invalid email")
+                            this.loading = false
+                            return
+                        }
+                        if(this.password.length < 8) {
+                            this.SetError("Password is too short")
+                            this.loading = false
+                            return
+
+                        }
+                    }
+                    axios.post("/api/register", {
+                        name: this.name,
+                        email: this.email,
+                        password: this.password
+                    }).then(({data}) => {
+                        console.log(data)
+                        localStorage.setItem("token", JSON.stringify(data.data.token))
+                        localStorage.setItem("auth", JSON.stringify(true))
+                        window.location.replace("/")
+                    }).catch(err => {
+                        console.error(err)
+                        this.SetError(err.response.data.error)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                },
+                SetError(err) {
+                    this.error = err
+                    setTimeout(() => {
+                        this.error = ""
+                    }, 3000)
+                },
+                redirect() {
+                    window.location.replace("/login")
+                }
+            },
+        })
+    </script>
+    <style>
+        .full-width {
+            width: 100%;
+        }
+    </style>
+{{end}}

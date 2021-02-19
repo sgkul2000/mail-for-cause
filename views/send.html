@@ -1,0 +1,114 @@
+{{define "send"}}
+<div id="SendMain">
+<div class="columns is-centered is-vcentered full-height">
+    <div class="column is-two-thirds-desktop">
+        <div class="is-size-3">Support the cause: {{.Data.Name}}</div>
+        <p>{{.Data.Description}}</p>
+        <div class="is-size-5 mt-4">To:</div>
+        {{range $key, $value := .Data.To}}
+        <span class="address"> {{$value}} </span>
+        {{end}}
+        <div class="titleWrapper">
+            <div class="">
+                <div class="is-size-5 mt-4">Subject:</div>
+                <span class="is-size-6 has-text-dark">Select a subject template.</span>
+            </div>
+            <div class="paginate">[[ subjectsIndex + 1 ]] / [[ subjects.length ]] 
+                    <span class="changeButtons px-3 is-clickable" @click="decrementSubjects"><</span> <span class="changeButtons px-3 is-clickable"  @click="incrementSubjects">></span>
+            </div>
+        </div>
+        <div class="textAreaDisplay my-4">[[ subjects[subjectsIndex] ]]</div>
+        <div class="titleWrapper">
+            <div class="">
+                <div class="is-size-5 mt-4">Bodies:</div>
+                <span class="is-size-6 has-text-dark">Select a body template.</span>
+            </div>
+            <div class="paginate">[[ bodiesIndex + 1 ]] / [[ bodies.length ]] 
+                    <span class="changeButtons px-3 is-clickable" @click="decrementBodies"><</span> <span class="changeButtons px-3 is-clickable"  @click="incrementBodies">></span>
+            </div>
+        </div>
+        <div class="textAreaDisplay my-4">[[ bodies[bodiesIndex] ]]</div>
+        <div class="buttonWrapper">
+            <a class="button is-primary mx-4 my-6 sendButton" :href="`mailto:${to.join(',')}?subject=${subjects[subjectsIndex]}&body=${bodies[bodiesIndex]}`">Send</a>
+        </div>
+    </div>
+
+</div>
+</div>
+<script>
+new Vue({
+    el: "#SendMain",
+    delimiters: ["[[", "]]"],
+    data:{
+        name: "{{.Data.Name}}",
+        subjectsIndex: 0,
+        bodiesIndex: 0,
+        to: [
+            {{range $index, $value := .Data.To}}
+            "{{$value}}",
+            {{end}}
+        ],
+        subjects: [
+            {{range $index, $value := .Data.Subjects}}
+            "{{$value}}",
+            {{end}}
+        ],
+        bodies: [
+            {{range $index, $value := .Data.Bodies}}
+            "{{$value}}",
+            {{end}}
+        ],
+    },
+    mounted() {
+    },
+    methods:{
+        decrementSubjects(){
+            if(this.subjectsIndex > 0) {
+                this.subjectsIndex -= 1
+            }
+        },
+        incrementSubjects(){
+            if(this.subjectsIndex < this.subjects.length-1) {
+                this.subjectsIndex += 1
+            }
+        },
+        decrementBodies(){
+            if(this.bodiesIndex > 0) {
+                this.bodiesIndex -= 1
+            }
+        },
+        incrementBodies(){
+            if(this.bodiesIndex < this.bodies.length-1) {
+                this.bodiesIndex += 1
+            }
+        },
+    }
+})
+</script>
+<style>
+    .titleWrapper{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+    }
+    .textAreaDisplay {
+        padding: 0.6rem;
+        border: 1px solid #222;
+        border-radius: 5px;
+    }
+    .changeButtons {
+        font-size: 140%;
+        font-weight: 700;
+    }
+    .sendButton {
+        width: 50%;
+        margin: initial auto;
+    }
+    .buttonWrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{{end}}

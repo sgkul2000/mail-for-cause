@@ -1,0 +1,165 @@
+{{define "create"}}
+<div id="CreateMain">
+<div class="columns is-centered is-vcentered full-height mx-1">
+    <div class="column is-two-thirds-desktop">
+        <div class="is-size-1 has-text-weight-bold">Create Cause</div>
+        <div id="NameInput" class="my-6">
+            <div class="TitleGroup">
+                <div class="is-size-3 has-text-weight-bold">Name</div>
+                <!-- <div class="AddIcon"><button class="button is-primary is-light">Add</button></div> -->
+            </div>
+            <input v-model="name" class="input is-primary my-2" type="text" placeholder="Enter the name of cause">
+        </div>
+        <div id="ToInputs" class="my-6">
+            <div class="TitleGroup">
+                <div class="is-size-3 has-text-weight-bold">To</div>
+                <div class="AddIcon"><button @click="AddTo" class="button is-primary is-light">Add</button></div>
+            </div>
+            <input v-for="(item, index) in to" :key="index" v-model="to[index]" class="input is-primary my-2" type="text" placeholder="Enter an email address">
+        </div>
+        <div id="SubjectInputs" class="my-6">
+            <div class="TitleGroup">
+                <div class="is-size-3 has-text-weight-bold">Subjects</div>
+                <div class="AddIcon"><button @click="AddSubject" class="button is-primary is-light">Add</button></div>
+            </div>
+            <input v-for="(item, index) in subjects" :key="index" v-model="subjects[index]" class="input is-primary my-2" placeholder="Enter a subject"></input>
+        </div>
+        <div id="BodyInputs" class="my-6">
+            <div class="TitleGroup">
+                <div class="is-size-3 has-text-weight-bold">Bodies</div>
+                <div class="AddIcon"><button @click="AddBody" class="button is-primary is-light">Add</button></div>
+            </div>
+            <textarea  v-for="(item, index) in bodies" :key="index" v-model="bodies[index]"class="textarea is-primary my-4" placeholder="Enter the email body"></textarea>
+        </div>
+        <button @click="submit()" class="button is-primary has-text-weight-bold mb-6">
+            Create Cause
+        </button>
+        <button @click="reset()" class="button is-danger is-light has-text-weight-semibold mb-6">
+            Reset
+        </button>
+    </div>
+</div>
+<div class="notification is-danger CustomNotification"  v-if="error.length > 0">
+    <button @click="error=''" class="delete"></button>
+    [[ error ]]
+  </div>
+</div>
+<script>
+    new Vue({
+        el: "#CreateMain",
+        delimiters:["[[", "]]"],
+        data:{
+            name: "",
+            to:[
+                ""
+            ],
+            subjects: [
+                ""
+            ],
+            bodies: [
+                ""
+            ],
+            loading: false,
+            error:""
+        },
+        mounted() {
+            let isLogged = JSON.parse(localStorage.getItem("auth"))
+            if (!isLogged) {
+                window.location.replace("/")
+            } else {
+                this.token = JSON.parse(localStorage.getItem("token"))
+            }
+            // axios.get("/api/auth-checker", {
+            //     headers: {
+            //         "Authorization": "Bearer " + token
+            //     }
+            // }).then(() => {
+            // }).catch(err => {
+            //     console.error(err)
+            //     localStorage.setItem("auth", JSON.stringify(false))
+            //     window.location.replace("/")
+            // })
+        },
+        methods: {
+            AddTo() {
+                this.to.push("")
+            },
+            AddSubject() {
+                this.subjects.push("")
+            },
+            AddBody() {
+                this.bodies.push("")
+            },
+            Validate() {
+                this.OmitEmpty()
+                if(this.name.length === 0 || this.to.length === 0 || this.subjects.length === 0 || this.bodies.length === 0) {
+                    this.loading = false
+                    this.SetError("Please enter all the details correctly")
+                    return
+                }
+                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                this.to.forEach(element => {
+                    if(!re.test(String(element).toLowerCase())) {
+                        this.SetError("Invalid email")
+                    }
+                });
+            },
+            OmitEmpty() {
+                this.to = this.to.filter((element) => element.length !== 0)
+                this.subjects = this.subjects.filter((element) => element.length !== 0)
+                this.bodies = this.bodies.filter((element) => element.length !== 0)
+            },
+            SetError(error) {
+                this.error = error
+                setTimeout(() => {
+                    this.error = ""
+                }, 7000)
+            },
+            reset() {
+                this.name = ""
+                this.to = [""]
+                this.subjects = [""]
+                this.bodies = [""]
+            },
+            submit() {
+                this.Validate()
+                axios.post("/api/cause", {
+                    name: this.name,
+                    to: this.to,
+                    subjects: this.subjects,
+                    bodies: this.bodies
+                }, {
+                    headers: {
+                        "Authorization": "Bearer " + this.token
+                    }
+                }).then(({data}) => {
+                    window.location.replace("/")
+                }).catch((err) => {
+                    console.error(err)
+                    this.SetError(err.response.data.error)
+                })
+            }
+        }
+    })
+</script>
+<style>
+    .full-height {
+        min-height: calc(100vh - 237px);
+    }
+    .TitleGroup{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        margin: 1rem 0 ;
+
+    }
+
+    .CustomNotification {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        width: 400px;
+    }
+</style>
+{{end}}
