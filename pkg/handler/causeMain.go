@@ -78,30 +78,3 @@ func GetCause(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, response)
 }
-
-// // GetCauses creates a new cause
-// func GetCauses(c echo.Context) error {
-// 	tokenString := c.Request().Header.Values("Authorization")[0][7:]
-// 	claims := jwt.MapClaims{}
-// 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-// 		return []byte(os.Getenv("SECRET")), nil
-// 	})
-// 	if err != nil {
-// 		return err
-// 	}
-// 	newCause := new(types.Cause)
-// 	if err := c.Bind(newCause); err != nil {
-// 		return err
-// 	}
-// 	if err = validator.New().Struct(newCause); err != nil {
-// 		return err
-// 	}
-// 	err = db.CreateCause(claims["email"].(string), newCause)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	response := types.Response{
-// 		Success: true,
-// 	}
-// 	return c.JSON(http.StatusOK, response)
-// }
