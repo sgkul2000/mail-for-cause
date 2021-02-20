@@ -13,7 +13,7 @@ import (
 
 // CreateCause creates a new cause and appends it to the users causes
 func CreateCause(email string, cause *types.Cause) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
@@ -31,7 +31,7 @@ func CreateCause(email string, cause *types.Cause) error {
 
 // EditCause edits a cause
 func EditCause(email string, cause *types.Cause) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
@@ -50,7 +50,7 @@ func EditCause(email string, cause *types.Cause) error {
 
 // GetCauses edits a cause
 func GetCauses() (interface{}, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
@@ -81,7 +81,7 @@ func GetCauses() (interface{}, error) {
 
 // GetCause gets a single cause by name
 func GetCause(name string) (interface{}, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {

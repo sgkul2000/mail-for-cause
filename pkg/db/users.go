@@ -13,7 +13,7 @@ import (
 
 // CreateUser  creates a user
 func CreateUser(u types.User) (primitive.ObjectID, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
@@ -35,7 +35,7 @@ func CreateUser(u types.User) (primitive.ObjectID, error) {
 
 // FindUser finds a single user
 func FindUser(email string) (types.User, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil {
